@@ -13,6 +13,7 @@ function Login() {
   const [error, setError] = useState('');
 
   const handleGoogleLogin = async () => {
+    setError(''); // Clear previous error
     try {
       const result = await signInWithPopup(auth, provider);
       setUser({
@@ -22,7 +23,7 @@ function Login() {
       });
       navigate('/dashboard');
     } catch (error) {
-      setError('Google login failed!');
+      setError('Google login failed! Please close any popup blockers and try again.');
     }
   };
 

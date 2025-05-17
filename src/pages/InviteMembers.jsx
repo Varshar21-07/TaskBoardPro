@@ -1,15 +1,22 @@
 import { useState } from 'react';
 import { Button, Box, Typography, TextField, Modal, List, ListItem, ListItemText } from '@mui/material';
+import { inviteProjectMember } from '../api/api';
 
-function InviteMembers({ members, onInvite, onNotify }) {
+function InviteMembers({ members, onInvite, onNotify, projectId, inviterName }) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
 
-  const handleInvite = () => {
+  const handleInvite = async () => {
     if (email) {
-      onInvite(email);
-      if (onNotify) {
-        onNotify(`Invitation sent to ${email}`);
+      if (onInvite) {
+        await onInvite(email);
+      } else if (projectId) {
+        try {
+          await inviteProjectMember({ email, projectId, inviterName });
+          if (onNotify) onNotify(`Invitation sent to ${email}`);
+        } catch (err) {
+          if (onNotify) onNotify(`Failed to send invite: ${err.message}`);
+        }
       }
       setEmail('');
       setOpen(false);
